@@ -53,6 +53,22 @@ def api_tasks():
 
 @app.route("/api/tasks/<int:task_id>", methods=["GET"])
 def get_task(task_id):
+    for task in tasks:
+        if task["id"] == task_id:
+            return jsonify(task)
+    return jsonify(error="Task not found"), 404
+
+@app.route("/api/tasks/<int:task_id>", methods=["PATCH"])
+def patch_task(task_id):
+    data = request.get_json()
+    if data is None or "completed" not in data or not isinstance(data["completed"], bool):
+        return jsonify(error="Completed status must be true or false"), 400
+    for task in tasks:
+        if task["id"]== task_id:
+            task["completed"]= data["completed"]
+            return jsonify(task)
+    return jsonify(error="Task not found"), 404
+            
 
 if __name__ == "__main__":
     app.run(debug=True)
