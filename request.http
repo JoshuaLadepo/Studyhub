@@ -25,3 +25,18 @@ Content-Type: application/json
 {
   "title": ""
 }
+
+###
+PATCH http://127.0.0.1:5000/api/tasks/1
+Content-Type: application/json
+
+{
+    "completed": true
+}
+###
+
+DELETE http://127.0.0.1:5000/api/tasks/2
+
+###
+
+GET http://127.0.0.1:5000/api/tasks/2
