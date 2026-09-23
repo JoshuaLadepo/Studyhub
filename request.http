@@ -40,3 +40,12 @@ DELETE http://127.0.0.1:5000/api/tasks/2
 ###
 
 GET http://127.0.0.1:5000/api/tasks/2
+
+###
+
+POST http://127.0.0.1:5000/api/db-testing
+Content-Type: application/json
+
+{
+    "title": "Learn SQLAlchemy"
+}

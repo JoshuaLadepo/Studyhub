@@ -57,9 +57,31 @@ def db_testing():
              "title": new_task.title,
              "completed" :new_task.completed
         }), 201
+
+    if request.method == "GET":
+        tasks = Task.query.all()
+        return jsonify([
+            {
+                "id":tasks.id,
+                "title":tasks.title,
+                "completed":tasks.completed
+            }
+        ]
+        )
+        
     
+@app.route("/api/db-testing/<int:task_id>",methods = ["GET"])
+def db_get(task_id):
     
-    tasks_list = []
+        task = Task.query.get(task_id)
+        if task is None:
+            return jsonify(error = "Task not found"), 404
+        return jsonify({
+            "id":task.id,
+            "title":task.title,
+            "completed":task.completed
+        })
+    
 
 
 tasks = [
