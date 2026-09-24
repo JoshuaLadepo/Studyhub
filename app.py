@@ -28,19 +28,9 @@ class Task(db.Model):
     title = db.Column(db.String(200), nullable=False)
     completed = db.Column(db.Boolean, nullable=False, default=False)
 
-@app.route("/api/db-test")
-def db_test():
-    tasks = Task.query.all()
 
-    return jsonify([
-        {
-            "id": task.id,
-            "title": task.title,
-            "completed": task.completed
-        }
-        for task in tasks
-    ])
-@app.route("/api/db-testing", methods = ["GET","POST"])
+
+@app.route("/api/tasks", methods = ["GET","POST"])
 def db_testing():
     if request.method == "POST":
         data = request.get_json()
@@ -59,18 +49,19 @@ def db_testing():
         }), 201
 
     if request.method == "GET":
-        tasks = Task.query.all()
+        db.session.get(Task)
         return jsonify([
             {
-                "id":tasks.id,
-                "title":tasks.title,
-                "completed":tasks.completed
+                "id":task.id,
+                "title":task.title,
+                "completed":task.completed
             }
+            for task in tasks
         ]
         )
         
     
-@app.route("/api/db-testing/<int:task_id>",methods = ["GET"])
+@app.route("/api/tasks/<int:task_id>",methods = ["GET"])
 def db_get(task_id):
     
         task = Task.query.get(task_id)
@@ -82,7 +73,7 @@ def db_get(task_id):
             "completed":task.completed
         })
 
-@app.route("/api/db-testing/<int:task_id>", methods = ["PATCH"])
+@app.route("/api/tasks/<int:task_id>", methods = ["PATCH"])
 def db_update(task_id):
     task = db.session.get(Task,task_id)
     if task is None:
@@ -117,18 +108,6 @@ def db_delete(task_id):
     
 
 
-tasks = [
-    {
-        "id": 1,
-        "title": "Learn Flask",
-        "completed": False
-    },
-    {
-        "id": 2,
-        "title": "Practise Python",
-        "completed": True
-    }
-]
 
 
 @app.route("/")
@@ -146,49 +125,6 @@ def api_status():
     status="running",
     version=0.1
 )
-@app.route("/api/tasks", methods=["GET", "POST"])
-def api_tasks():
-    if request.method == "GET":
-        return jsonify(tasks=tasks)
-
-    if request.method == "POST":
-        new_task = request.get_json()
-        title = new_task.get("title")
-
-        if not isinstance(title, str) or not title.strip():
-            return jsonify(error="Valid title is required"), 400
-
-        new_task["id"] = len(tasks) + 1
-        new_task["completed"] = False
-        tasks.append(new_task)
-
-        return jsonify(new_task), 201
-
-@app.route("/api/tasks/<int:task_id>", methods=["GET"])
-def get_task(task_id):
-    for task in tasks:
-        if task["id"] == task_id:
-            return jsonify(task)
-    return jsonify(error="Task not found"), 404
-
-@app.route("/api/tasks/<int:task_id>", methods=["PATCH"])
-def patch_task(task_id):
-    data = request.get_json()
-    if data is None or "completed" not in data or not isinstance(data["completed"], bool):
-        return jsonify(error="Completed status must be true or false"), 400
-    for task in tasks:
-        if task["id"]== task_id:
-            task["completed"]= data["completed"]
-            return jsonify(task)
-    return jsonify(error="Task not found"), 404
-
-@app.route("/api/tasks/<int:task_id>", methods=["DELETE"])
-def delete_task(task_id):
-    for task in tasks:
-        if task["id"] == task_id:
-            tasks.remove(task)
-            return jsonify(message="Task deleted") , 200
-    return jsonify(error="Task not found"), 404
 
 
 
