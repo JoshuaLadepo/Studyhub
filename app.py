@@ -81,6 +81,39 @@ def db_get(task_id):
             "title":task.title,
             "completed":task.completed
         })
+
+@app.route("/api/db-testing/<int:task_id>", methods = ["PATCH"])
+def db_update(task_id):
+    task = db.session.get(Task,task_id)
+    if task is None:
+        return jsonify(error= "Task not found"),404
+
+    data= request.get_json()
+    if data is None:
+        return jsonify(error = "Invalid Request"),400
+    completed = data.get("completed")
+    if  not isinstance(completed,bool):
+        return jsonify(error= "Invalid character format"),400
+
+    task.completed= completed
+    db.session.commit()
+
+    return jsonify(
+        {
+            "id":task.id,
+            "title":task.title,
+            "completed":task.completed
+        }
+    )
+
+@app.route("/api/db-testing/<int:task_id>",methods=["DELETE"])
+def db_delete(task_id):
+    task = db.session.get(Task,task_id)
+    if task is None:
+        return jsonify(error = "Task not found"),404
+    db.session.delete(task)
+    db.session.commit()
+    return jsonify(message = "Task deleted")
     
 
 

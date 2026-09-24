@@ -49,3 +49,18 @@ Content-Type: application/json
 {
     "title": "Learn SQLAlchemy"
 }
+###
+
+PATCH http://127.0.0.1:5000/api/db-testing/3
+Content-Type: application/json
+
+{
+    "completed": true
+}
+
+###
+
+DELETE http://127.0.0.1:5000/api/db-testing/3
+
+###
+GET http://127.0.0.1:5000/api/db-testing/3
