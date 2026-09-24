@@ -49,7 +49,7 @@ def db_testing():
         }), 201
 
     if request.method == "GET":
-        db.session.get(Task)
+        tasks = Task.query.all()
         return jsonify([
             {
                 "id":task.id,
@@ -64,7 +64,7 @@ def db_testing():
 @app.route("/api/tasks/<int:task_id>",methods = ["GET"])
 def db_get(task_id):
     
-        task = Task.query.get(task_id)
+        task = db.session.get(Task,task_id)
         if task is None:
             return jsonify(error = "Task not found"), 404
         return jsonify({
@@ -97,7 +97,7 @@ def db_update(task_id):
         }
     )
 
-@app.route("/api/db-testing/<int:task_id>",methods=["DELETE"])
+@app.route("/api/tasks/<int:task_id>",methods=["DELETE"])
 def db_delete(task_id):
     task = db.session.get(Task,task_id)
     if task is None:
